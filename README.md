@@ -19,3 +19,4 @@ make
 ```
 
 #### This code is a test-education code. I do not recommend to use in a big project directly.
+#### I can say proudly "no ai used while coding this heheheh (my one of the beginner code)"
