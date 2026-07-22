@@ -18,5 +18,5 @@ make
 ./spadcli
 ```
 
-#### This code is a test-education code. I do not recommend to use in a big project directly.
+#### This code is a test-education code. I do not recommend to use in your project directly.
 #### I can say proudly "no ai used while coding this heheheh (my one of the beginner code)"
