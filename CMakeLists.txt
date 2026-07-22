@@ -8,10 +8,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SOURCES
 	main.cpp
-	genSyntheticSig.cpp
-	applyMovingAvrFilter.cpp
-	calculateStats.cpp
-	exportToCSV.cpp
-	detectAnomalies.cpp
+	src/spadcli.cpp
 )
 add_executable(spadcli ${SOURCES})

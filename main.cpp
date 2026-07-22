@@ -1,12 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "coreStructures.h"
-#include "detectAnomalies.h"
-#include "genSyntheticSig.h"
-#include "applyMovingAvrFilter.h"
-#include "calculateStats.h"
-#include "exportToCSV.h"
+#include "src/spadcli.h"
 
 int main(){
     double version{0.1};
