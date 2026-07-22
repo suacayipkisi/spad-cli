@@ -33,8 +33,5 @@ int main(){
     detectAnomalies(allData);
     exportToCSV(allData);
 
-    std::cout << '\n';
-
-
     return 0;
 }
