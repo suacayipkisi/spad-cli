@@ -21,7 +21,7 @@ struct SignalStats{
 };
 
 double randomNum();
-void generateSyntheticSignal(double& timeDelta, double& time, std::vector<SensorPoint>& point);
+void generateSyntheticSignal(const double& timeDelta, const double& time, std::vector<SensorPoint>& point);
 
 void applyMovingAverageFilter(std::vector<SensorPoint>& input);
 
