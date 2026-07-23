@@ -2,7 +2,6 @@
 
 #include <vector>
 
-
 enum class FilterType{
     None,
     MovingAverage,
@@ -21,18 +20,13 @@ struct SignalStats{
     double rms{};  //root mean square
 };
 
-//get synthetic signal
 double randomNum();
 void generateSyntheticSignal(double& timeDelta, double& time, std::vector<SensorPoint>& point);
 
-//apply moving average filter
 void applyMovingAverageFilter(std::vector<SensorPoint>& input);
 
-//calculate stats
 SignalStats calculateStats(const std::vector<SensorPoint>& input);
 
-//detect anomalies
 void detectAnomalies(const std::vector<SensorPoint>& info);
 
-//export to csv
 void exportToCSV(const std::vector<SensorPoint>& sensor);

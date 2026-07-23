@@ -4,10 +4,7 @@
 #include <cmath>
 #include <fstream>
 
-
 #include "spadcli.h"
-
-
 
 //get synthetic signal
 double randomNum(){
@@ -23,7 +20,9 @@ void generateSyntheticSignal(double& timeDelta, double& time, std::vector<Sensor
     for(int i{0}; i < (time/timeDelta); i++){
         point.push_back({});
         point[i].timestamp = (i*timeDelta);
-        point[i].raw_acceleration = (5.0 * std::sin( 2.0 * pi * 10.0 * i * timeDelta) + 2.0 * std::cos(2 * pi * 50.0 * i *  timeDelta) + randomNum());
+        point[i].raw_acceleration = (5.0 * std::sin( 2.0 * pi * 10.0 * i * timeDelta) 
+                                        + 2.0 * std::cos(2 * pi * 50.0 * i *  timeDelta) 
+                                        + randomNum());
         if((i*timeDelta) >= 2.500 && (i*timeDelta) <= 2.505){
             point[i].raw_acceleration += 40.0;
         }
