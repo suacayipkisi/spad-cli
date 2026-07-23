@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -11,78 +12,81 @@ double randomNum(){
     static std::random_device random;
     static std::mt19937 gen(random());
     std::uniform_real_distribution<double> dis(-0.5, 0.5);
-    double randomDouble = dis(gen);
-    return randomDouble;
+    return dis(gen);
 }
 
-void generateSyntheticSignal(double& timeDelta, double& time, std::vector<SensorPoint>& point){
+void generateSyntheticSignal(const double& timeDelta, const double& time, std::vector<SensorPoint>& point){
     double pi = std::numbers::pi;
-    for(int i{0}; i < (time/timeDelta); i++){
-        point.push_back({});
-        point[i].timestamp = (i*timeDelta);
-        point[i].raw_acceleration = (5.0 * std::sin( 2.0 * pi * 10.0 * i * timeDelta) 
+    size_t totalPoints = static_cast<size_t>(time/timeDelta);
+    point.reserve(totalPoints);
+
+    for(int i{0}; i < totalPoints; i++){
+        double t{i*timeDelta};
+        double raw{5.0 * std::sin( 2.0 * pi * 10.0 * i * timeDelta) 
                                         + 2.0 * std::cos(2 * pi * 50.0 * i *  timeDelta) 
-                                        + randomNum());
-        if((i*timeDelta) >= 2.500 && (i*timeDelta) <= 2.505){
-            point[i].raw_acceleration += 40.0;
+                                        + randomNum()
+                    };
+        if(t >= 2.500 && t <= 2.505){
+            raw += 40.0;
         }
+
+        point.push_back(SensorPoint{t, raw, 0.0});
     }
 }
 
 //apply moving average filter
 void applyMovingAverageFilter(std::vector<SensorPoint>& input){
-    int sizeofVector{static_cast<int>(input.size())};
-    std::vector<double> filtered;
-    filtered.push_back(input[0].raw_acceleration);
-    filtered.push_back(input[1].raw_acceleration); //ilk iki değer filtrelenmez
-    for (int i{2}; i < (sizeofVector - 2); i++){
+    size_t sizeofVector{input.size()};
+    if(sizeofVector < 5){
+        for(size_t i{0}; i< sizeofVector; i++){
+            input[i].filtered_acceleration = input[i].raw_acceleration;
+        }
+        return;
+    }
+    input[0].filtered_acceleration = input[0].raw_acceleration;
+    input[1].filtered_acceleration = input[1].raw_acceleration; //ilk iki değer filtrelenmez
+    for (size_t i{2}; i < (sizeofVector - 2); i++){
         double filtering{};
-        for (int j{0}; j<5; j++){
+        for (size_t j{0}; j<5; j++){
             filtering += input[i + j - 2].raw_acceleration;
         }
-        filtering /= 5;
-        filtered.push_back(filtering);
+        input[i].filtered_acceleration = filtering / 5.0;
     }
-    filtered.push_back(input[sizeofVector-2].raw_acceleration);
-    filtered.push_back(input[sizeofVector-1].raw_acceleration); //son iki değer filterlenmez
-
-    for(int i{0}; i<sizeofVector; i++){
-        input[i].filtered_acceleration = filtered[i];
-    }
+    input[sizeofVector - 2].filtered_acceleration = input[sizeofVector - 2].raw_acceleration;
+    input[sizeofVector - 1].filtered_acceleration = input[sizeofVector-1].raw_acceleration; //son iki değer filterlenmez
 }
 
 //calculate stats
 SignalStats calculateStats(const std::vector<SensorPoint>& input){
     
-    int vectorSize{static_cast<int>(input.size())};
+    size_t vectorSize = input.size();
+    if (vectorSize ==0) return{};
 
     double tempMean{};
     double tempSumfiltered{};
-    for (int i{0}; i < vectorSize; i++){
-        tempMean += input[i].filtered_acceleration;
-        tempSumfiltered += std::pow(input[i].filtered_acceleration, 2);
+    for (size_t i{0}; i < vectorSize; i++){
+        double val = input[i].filtered_acceleration;
+        tempMean += val;
+        tempSumfiltered +=(val * val);
     }
+
     double valueMean{tempMean/vectorSize};
-    double valueRMSfiltered{static_cast<double>(std::sqrtl(tempSumfiltered/vectorSize))};
+    double valueRMSfiltered{std::sqrt(tempSumfiltered/vectorSize)};
 
 
     double maxValue{input[0].filtered_acceleration};
     double minValue{input[0].filtered_acceleration};
-    for (int i{1}; i < vectorSize; i++){
-        if(input[i].filtered_acceleration > maxValue){
-            maxValue = input[i].filtered_acceleration;
-        }
-        if(input[i].filtered_acceleration < minValue){
-            minValue = input[i].filtered_acceleration;
-        }
+    for (size_t i{1}; i < vectorSize; i++){
+        double val{input[i].filtered_acceleration};
+        if(val > maxValue) maxValue = val;
+        if(val < minValue) minValue = val;
     }
     
-    SignalStats stat{maxValue, minValue, valueMean, valueRMSfiltered};
-    return stat;
+    return SignalStats{maxValue, minValue, valueMean, valueRMSfiltered};
 }
 
 //print signal stats
-void printSignalStats(SignalStats& stats){
+void printSignalStats(const SignalStats& stats){
     std::cout << "--- SIGNAL STATISTICS ---\n";
     std::cout << "Max Acc : " << stats.max_value << " g\n";
     std::cout << "Min Acc : " << stats.min_value << " g\n";
@@ -93,13 +97,14 @@ void printSignalStats(SignalStats& stats){
 //detect anomalies
 void detectAnomalies(const std::vector<SensorPoint>& info){
     std::cout << "--- ANOMALY DETECTİON (Treshold > 15.0g) ---\n";
-    std::string_view warn{"[WARN]"};
-    int vecLength{static_cast<int>(info.size())};
-    for(int i{0}; i< vecLength; i++){
+    constexpr std::string_view warn{"[WARN]"};
+    size_t vecLength{info.size()};
+
+    for(size_t i{0}; i< vecLength; i++){
         if(info[i].filtered_acceleration > 15.0){
             std::cout << warn << " " << "at" <<  info[i].timestamp
-                << ". second. Anomaly Detected!\n";
-            std::cout << "Value: " << info[i].filtered_acceleration
+                << ". second. Anomaly Detected!\n"
+                << "Value: " << info[i].filtered_acceleration
                 << "g\n";
         }
     }
