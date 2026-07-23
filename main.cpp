@@ -7,7 +7,7 @@ int main(){
     double version{0.1};
     std::cout << "=== Vibration Signal Analysis Tool v" << version <<  " ===" << '\n';
     
-    double duration{10.0}; //sec
+    double duration{10000.0}; //sec
     double dt{0.001}; //sec
     int dataPointNum{static_cast<int>(duration / dt)};
     

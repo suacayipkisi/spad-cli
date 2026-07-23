@@ -20,10 +20,10 @@ void generateSyntheticSignal(const double& timeDelta, const double& time, std::v
     size_t totalPoints = static_cast<size_t>(time/timeDelta);
     point.reserve(totalPoints);
 
-    for(int i{0}; i < totalPoints; i++){
+    for(size_t i{0}; i < totalPoints; i++){
         double t{i*timeDelta};
-        double raw{5.0 * std::sin( 2.0 * pi * 10.0 * i * timeDelta) 
-                                        + 2.0 * std::cos(2 * pi * 50.0 * i *  timeDelta) 
+        double raw{5.0 * std::sin( 2.0 * pi * 10.0 * t) 
+                                        + 2.0 * std::cos(2 * pi * 50.0 * t) 
                                         + randomNum()
                     };
         if(t >= 2.500 && t <= 2.505){
