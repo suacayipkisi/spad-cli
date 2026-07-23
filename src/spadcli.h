@@ -27,6 +27,8 @@ void applyMovingAverageFilter(std::vector<SensorPoint>& input);
 
 SignalStats calculateStats(const std::vector<SensorPoint>& input);
 
+void printSignalStats(SignalStats& stats);
+
 void detectAnomalies(const std::vector<SensorPoint>& info);
 
 void exportToCSV(const std::vector<SensorPoint>& sensor);

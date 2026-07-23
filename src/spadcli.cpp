@@ -81,6 +81,15 @@ SignalStats calculateStats(const std::vector<SensorPoint>& input){
     return stat;
 }
 
+//print signal stats
+void printSignalStats(SignalStats& stats){
+    std::cout << "--- SIGNAL STATISTICS ---\n";
+    std::cout << "Max Acc : " << stats.max_value << " g\n";
+    std::cout << "Min Acc : " << stats.min_value << " g\n";
+    std::cout << "Average : " << stats.mean << " g\n";
+    std::cout << "RMS (Energy):" << stats.rms << " g\n";
+}
+
 //detect anomalies
 void detectAnomalies(const std::vector<SensorPoint>& info){
     std::cout << "--- ANOMALY DETECTİON (Treshold > 15.0g) ---\n";

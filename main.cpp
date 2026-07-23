@@ -15,8 +15,8 @@ int main(){
     generateSyntheticSignal(dt, duration, allData);
     
     std::cout << "[INFO] " << dataPointNum << " data point simulated"
-        << " (Duration: " << duration << "s, "
-        << "dt: " << dt << "s)." << '\n';
+                << " (Duration: " << duration << "s, "
+                << "dt: " << dt << "s)." << '\n';
 
     applyMovingAverageFilter(allData);
 
@@ -24,11 +24,7 @@ int main(){
 
     SignalStats allStats{calculateStats(allData)};
 
-    std::cout << "--- SIGNAL STATISTICS ---\n";
-    std::cout << "Max Acc : " << allStats.max_value << " g\n";
-    std::cout << "Min Acc : " << allStats.min_value << " g\n";
-    std::cout << "Average : " << allStats.mean << " g\n";
-    std::cout << "RMS (Energy):" << allStats.rms << " g\n";
+    printSignalStats(allStats);
 
     detectAnomalies(allData);
     exportToCSV(allData);
